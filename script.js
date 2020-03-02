@@ -16,9 +16,9 @@ function onMapLoad() {
 
     $.getJSON('http://localhost/~pablonet/mapa/api/apiRestaurants.php', function(data){
          data_markers = data;
-        console.log(data_markers);
+        // console.log(data_markers);
         markerPrint(data_markers);
-        getFilters(data_markers);
+        getFoodList(data_markers);
     
     })
 
@@ -42,13 +42,29 @@ function markerPrint(data_markers){
         // console.log(marker);
         }
 }
+var foodFilter = []; // Empty array for get the kind food
 
-function getFilters(data_markers){
-    foodFilter= [];
-    for (i=0; i < data_markers.length; i++){
-        var kind_food = document.getElementById("kind_food_selector");
-        kind_food.insertAdjacentHTML("beforeend", "<option value=" + data_markers[i].kind_food +">"+ data_markers[i].kind_food + "</option>");
+function getFoodList(data_markers){
+   
+    for (i=0; i < data_markers.length; i++){ // restaurants loop
+        var kind_food = data_markers[i].kind_food.split(", "); // split de array of kind of food
+        for (y=0; y < kind_food.length; y++){ // kind of food lopp
+            foodFilter.push(kind_food[y]); // populate the list with all of kind of food
+        }
      }
+    //  console.log(foodFilter);
+     foodList = Array.from(new Set(foodFilter)); // delete no-unique kind of food
+     
+    //  console.log(foodList);
+
+    for (j=0; j<foodList.length; j++ ){
+        console.log(foodList[j]); // populating html select with the food list
+        var foodIndex = document.getElementById("kind_food_selector");
+        foodIndex.insertAdjacentHTML("beforeend", "<option value=" + foodList[j] +">"+ foodList[j]+ "</option>");
+
+
+    } 
+    // console.log(foodIndex);
 } 
 
 // "<option value=" + data_markers[i].name +">"+ data_markers[i].name + "</option>"
