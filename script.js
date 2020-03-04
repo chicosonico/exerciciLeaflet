@@ -11,6 +11,7 @@ $( document ).ready(function() {
 //en el clusters almaceno todos los markers
 var markers = L.markerClusterGroup();
 var data_markers = [];
+var markersArray =[];
 
 function onMapLoad() {
 
@@ -31,16 +32,19 @@ function onMapLoad() {
 	*/
 
 } 
-
+ 
 function markerPrint(data_markers){
     for (i=0; i < data_markers.length; i++){
         let name = data_markers[i].name;
         let address = data_markers[i].address;
         let latitud = data_markers[i].lat;
         let longitud = data_markers[i].lng;
-        var marker = L.marker([latitud,longitud]).bindPopup(name + address).addTo(map);
-        // console.log(marker);
+        var marker = L.marker([latitud,longitud]).bindPopup(name + "<br>" + address).addTo(map);
+        markersArray.push(marker);
+
+        
         }
+        //console.log(markersArray);
 }
 var foodFilter = []; // Empty array for get the kind food
 
@@ -52,19 +56,17 @@ function getFoodList(data_markers){
             foodFilter.push(kind_food[y]); // populate the list with all of kind of food
         }
      }
-    //  console.log(foodFilter);
+    console.log(foodFilter);
      foodList = Array.from(new Set(foodFilter)); // delete no-unique kind of food
-     
-    //  console.log(foodList);
+     foodList.sort();    
+    console.log(foodList);
 
     for (j=0; j<foodList.length; j++ ){
-        console.log(foodList[j]); // populating html select with the food list
+        //console.log(foodList[j]); // populating html select with the food list
         var foodIndex = document.getElementById("kind_food_selector");
         foodIndex.insertAdjacentHTML("beforeend", "<option value=" + foodList[j] +">"+ foodList[j]+ "</option>");
-
-
     } 
-    // console.log(foodIndex);
+    //console.log(foodIndex);
 } 
 
 // "<option value=" + data_markers[i].name +">"+ data_markers[i].name + "</option>"
@@ -72,14 +74,40 @@ function getFoodList(data_markers){
 
 
 $('#kind_food_selector').on('change', function() {
-    getFilters();
-//   console.log(this.value);
-  render_to_map(data_markers, this.value);
+    // getFilters();
+
+ for (h=0; h < markersArray.length; h++){
+        map.removeLayer(markersArray[h]);
+        
+        // console.log(marker);
+      } 
+      
+
+      if(this.value == "Todos"){
+        markerPrint(data_markers);
+      }else{
+       
+        render_to_map(data_markers, this.value);
+      }
+        
 });
 
 
 
 function render_to_map(data_markers,filter){
+    for (k= 0; k < markersArray.length; k++){
+        if(data_markers[k].kind_food.includes(filter)){
+            console.log(data_markers[k].kind_food);
+            let name = data_markers[k].name;
+            let address = data_markers[k].address;
+           let latitud = data_markers[k].lat;
+           let longitud = data_markers[k].lng;
+           var marker = L.marker([latitud,longitud]).bindPopup(name + address).addTo(map);
+           markersArray.push(marker);
+           }
+        }
+
+
 	
 	/*
 	FASE 3.2
@@ -88,6 +116,18 @@ function render_to_map(data_markers,filter){
 	*/	
 			
 }
+
+
+
+// map.on('click', function () {
+//     for (h=0; h < markersArray.length; h++){
+//         map.removeLayer(markersArray[h]);
+        
+//         // console.log(marker);
+//         }
+//   });
+
+
 
 
 
